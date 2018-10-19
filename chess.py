@@ -24,24 +24,67 @@ board[61] = 'B-'
 board[62] = 'N-'
 board[63] = 'R-'
 
-# Converts coord notation into [0,63] notation     # 56 57 58 59 60 61 62 63 
-def get_tile(x):    # 8(rank) + file               # 48 49 50 51 52 53 54 55
-    lets = ['a','b','c','d','e','f','g','h']       # 40 41 42 43 44 45 46 47
-    nums = ['1','2','3','4','5','6','7','8']       # 32 33 34 35 36 37 38 39
-    for i in lets:                                 # 24 25 26 27 28 29 30 31
-        if i == x[0]:                              # 16 17 18 19 20 21 22 23
-            f = lets.index(x[0])                   #  8  9 10 11 12 13 14 15
-    return (8 * nums.index(x[1])) + f              #  0  1  2  3  4  5  6  7
+# 56 57 58 59 60 61 62 63
+# 48 49 50 51 52 53 54 55
+# 40 41 42 43 44 45 46 47
+# 32 33 34 35 36 37 38 39
+# 24 25 26 27 28 29 30 31
+# 16 17 18 19 20 21 22 23
+#  8  9 10 11 12 13 14 15
+#  0  1  2  3  4  5  6  7
 
-def get_legal():
-    pass
+# Converts coord notation into [0,63] notation      
+def get_tile(x):    # 8(rank) + file               
+    lets = ['a','b','c','d','e','f','g','h']       
+    nums = ['1','2','3','4','5','6','7','8']       
+    for i in lets:                                 
+        if i == x[0]:                              
+            return (8 * nums.index(x[1])) + lets.index(x[0])              
 
+def get_legal(x):   # return set of legal tiles given input tile, x is a number
+    if board[x] == 'P+':
+        # if on home row, can move 2
+        # if no piece in front, can move forward
+        # if piece on diag, can capture
+        # make list of all moves, then delete invalid ones
+        legals = []
+        if board[x+8] == '  ':
+            legals.append(x+8)
+        if 8 <= x and x <= 15:
+            if board[x+16] == '  ':
+                legals.append(x+16)
+        if board[x+7] != '  ':
+            legals.append(x+7)
+        if board[x+9] != '  ':
+            legals.append(x+9)
+        return legals
+        
+    if board[x] == 'P-':
+        legals = []
+        if board[x-8] == '  ':
+            legals.append(x-8)
+        if 48 <= x and x <= 55:
+            if board[x-16] == '  ':
+                legals.append(x-16)
+        if board[x-7] != '  ':
+            legals.append(x-7)
+        if board[x-9] != '  ':
+            legals.append(x-9)
+        return legals
+
+    #if board[x][0] == 'R':
+        
+        
 def make_move():
     move = input("Input move: ")
     grab = move[0:2]
     drop = move[3:5]
     board[get_tile(drop)] = board[get_tile(grab)]
     board[get_tile(grab)] = '  '
+
+    #if get_tile(drop) in get_legal(get_tile(grab)):
+        #board[get_tile(drop)] = board[get_tile(grab)]
+        #board[get_tile(grab)] = '  '
 
 def print_board():
     line = '+--+--+--+--+--+--+--+--+'
@@ -98,5 +141,6 @@ def print_board():
     print('\n')
 
 while True:
+    print('\n'*10)
     print_board()
     make_move()
